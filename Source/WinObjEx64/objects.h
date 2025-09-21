@@ -4,9 +4,9 @@
 *
 *  TITLE:       OBJECTS.H
 *
-*  VERSION:     2.07
+*  VERSION:     2.10
 *
-*  DATE:        11 May 2025
+*  DATE:        19 Sep 2025
 *
 *  Header file for internal Windows object types handling.
 *
@@ -224,7 +224,7 @@ extern ULONG g_ObjectTypesCount;
 HIMAGELIST ObManagerLoadImageList(
     VOID);
 
-UINT ObManagerGetImageIndexByTypeName(
+INT ObManagerGetImageIndexByTypeName(
     _In_opt_ LPCWSTR lpTypeName);
 
 WOBJ_OBJECT_TYPE ObManagerGetIndexByTypeName(

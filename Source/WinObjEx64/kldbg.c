@@ -4,9 +4,9 @@
 *
 *  TITLE:       KLDBG.C, based on KDSubmarine by Evilcry
 *
-*  VERSION:     2.09
+*  VERSION:     2.10
 *
-*  DATE:        19 Aug 2025
+*  DATE:        19 Sep 2025
 *
 *  MINIMUM SUPPORTED OS WINDOWS 7
 *
@@ -1567,14 +1567,16 @@ BOOL kdpFindKiServiceTableByPattern(
         LeaPattern_KeServiceDescriptorTableShadow,
         sizeof(LeaPattern_KeServiceDescriptorTableShadow));
 
-    if (kdAddressInNtOsImage((PVOID)varAddress))
+    if (kdAddressInNtOsImage((PVOID)varAddress)) {
         *Address = varAddress;
+        return TRUE;
+    }
 
-    return TRUE;
+    return FALSE;
 }
 
 /*
-* kdFindServiceTable
+* kdFindKiServiceTable
 *
 * Purpose:
 *
@@ -1791,7 +1793,7 @@ POBEX_OBJECT_INFORMATION ObpCopyObjectBasicInfo(
         &InfoHeaderAddress,
         HeaderQuotaInfoFlag))
     {
-        kdReadSystemMemory(HeaderAddress,
+        kdReadSystemMemory(InfoHeaderAddress,
             &lpData->ObjectQuotaHeader,
             sizeof(OBJECT_HEADER_QUOTA_INFO));
     }
@@ -2133,8 +2135,7 @@ BOOL ObpEnumeratePrivateNamespaceTable(
 )
 {
     BOOL          bStopEnumeration = FALSE;
-    ULONG         i, j = 0;
-    ULONG         dirIterLimit = OB_MAX_DIRECTORY_ENUM_ITER, chainIterLimit = OB_MAX_DIRECTORY_ENUM_ITER;
+    ULONG         i, j = 0, dirIterLimit, chainIterLimit;
     ULONG_PTR     ObjectHeaderAddress, HeadItem, LookupItem, InfoHeaderAddress;
     HANDLE        ListHeap = (HANDLE)Context;
     PLIST_ENTRY   Next, Head;
@@ -2164,8 +2165,8 @@ BOOL ObpEnumeratePrivateNamespaceTable(
 
     for (i = 0; i < NUMBER_HASH_BUCKETS; i++) {
 
+        dirIterLimit = OB_MAX_DIRECTORY_ENUM_ITER;
         ListEntry = LookupTable.HashBuckets[i];
-
         Head = (PLIST_ENTRY)(TableAddress + (i * sizeof(LIST_ENTRY)));
         Next = ListEntry.Flink;
 
@@ -2192,6 +2193,8 @@ BOOL ObpEnumeratePrivateNamespaceTable(
             }
 
             for (j = 0; j < NUMBER_HASH_BUCKETS; j++) {
+
+                chainIterLimit = OB_MAX_DIRECTORY_ENUM_ITER;
 
                 HeadItem = (ULONG_PTR)DirObject.HashBuckets[j];
                 if (HeadItem != 0) {
@@ -3131,8 +3134,7 @@ BOOLEAN kdpQueryMmUnloadedDrivers(
                 //
                 // Use 19041+ specific patterns as an array allocation code has been changed.
                 //
-                switch (g_NtBuildNumber)
-                {
+                switch (g_NtBuildNumber) {
                 case NT_WIN11_24H2:
                 case NT_WIN11_25H2:
                     sigPattern = MiRememberUnloadedDriverPattern24H2;
@@ -3690,7 +3692,7 @@ BOOL kdGetAddressFromSymbolEx(
 )
 {
     BOOL bResult = FALSE;
-    ULONG_PTR address;
+    ULONG_PTR address = 0;
 
     WCHAR szLog[WOBJ_MAX_MESSAGE - 1];
 
