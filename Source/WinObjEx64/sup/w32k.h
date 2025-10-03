@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2023 - 2024
+*  (C) COPYRIGHT AUTHORS, 2023 - 2025
 *
 *  TITLE:       W32K.H
 *
-*  VERSION:     2.06
+*  VERSION:     2.10
 *
-*  DATE:        11 Oct 2024
+*  DATE:        03 Oct 2025
 *
 *  Common header file for the win32k support routines.
 *
@@ -50,6 +50,7 @@ typedef struct _SGD_GLOBALS {
     ULONG gAvailableSlots;
 } SGD_GLOBALS, *PSGD_GLOBALS;
 
+// Used by 24H2
 typedef struct _W32K_GLOBALS {
     PVOID gLowSessionGlobalSlots;  //pointer to list
     ULONG gAvailableSlots;
@@ -67,6 +68,7 @@ typedef struct _W32K_GLOBALS {
     PVOID gLock; //W32_PUSH_LOCK
 } W32K_GLOBALS, *PW32K_GLOBALS;
 
+// Used by 25H2
 typedef struct _W32K_GLOBALS_V2 {
     PVOID gSessionGlobalSlots;     //pointer to list
     PVOID gpSESSIONSLOTS;          //pointer to list
@@ -77,10 +79,9 @@ typedef struct _W32K_GLOBALS_V2 {
         ULONGLONG TotalCount;
     } gSessionApiSetHostRefCount;
     PVOID gSessionApiSetHostRefCountLock;
-    PVOID gSessionProcessLifetimeLock; //W32_PUSH_LOCK
     PVOID gLowSessionGlobalSlots;  //pointer to list
     ULONG gAvailableSlots;
-    ULONG Reserved0;
+    PVOID gSessionProcessLifetimeLock; //W32_PUSH_LOCK
     PVOID gLock; //W32_PUSH_LOCK
 } W32K_GLOBALS_V2, * PWIN32K_GLOBALS_V2;
 

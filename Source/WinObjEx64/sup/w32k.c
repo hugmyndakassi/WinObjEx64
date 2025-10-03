@@ -4,9 +4,9 @@
 *
 *  TITLE:       W32K.C
 *
-*  VERSION:     2.08
+*  VERSION:     2.10
 *
-*  DATE:        10 Jun 2025
+*  DATE:        03 Oct 2025
 *
 *  Win32k syscall table actual handlers resolving routines.
 *
@@ -225,8 +225,8 @@ ULONG SdtpQueryW32GetWin32kApiSetTableOffset(
 
     Index = 0;
     c = 0;
-    ScanBytes = (g_NtBuildNumber >= NT_WIN11_25H2) ? 64 : 32;
-    InstCount = (g_NtBuildNumber >= NT_WIN11_25H2) ? 2 : 1;
+    ScanBytes = (g_NtBuildNumber > NT_WIN11_25H2) ? 64 : 32;
+    InstCount = (g_NtBuildNumber > NT_WIN11_25H2) ? 2 : 1;
 
     do {
 
@@ -297,8 +297,8 @@ ULONG_PTR SdtpQueryWin32kSessionGlobals(
             return 0;
         }
 
-        if (g_NtBuildNumber >= NT_WIN11_25H2)
-        {
+        if (g_NtBuildNumber > NT_WIN11_25H2) {
+
             Index = 0;
             k = 0;
 
@@ -337,7 +337,7 @@ ULONG_PTR SdtpQueryWin32kSessionGlobals(
                 if (hs.flags & F_ERROR)
                     break;
 
-                //
+                //      
                 // Find W32GetSessionStateForSession call.
                 //
                 if ((hs.len == 5) &&
@@ -1277,18 +1277,31 @@ ULONG SdtWin32kInitializeOnce(
                 }
 
                 if (g_NtBuildNumber <= NT_WIN11_24H2) {
+                    //
+                    // gLowSessionGlobalSlots is before any other variables, read as-is
+                    //
                     if (!kdReadSystemMemory(varAddress, &Context->W32Globals.v1, sizeof(W32K_GLOBALS))) {
                         ulResult = ErrShadowWin32kGlobalsNotFound;
                         break;
                     }
                 }
-                else {
+                else if (g_NtBuildNumber <= NT_WIN11_25H2) {
+                    //
+                    // gLowSessionGlobalSlots is in the middle of variables, use offset calculation
+                    //
+                    varAddress -= FIELD_OFFSET(W32K_GLOBALS_V2, gLowSessionGlobalSlots);
                     if (!kdReadSystemMemory(varAddress, &Context->W32Globals.v2, sizeof(W32K_GLOBALS_V2))) {
                         ulResult = ErrShadowWin32kGlobalsNotFound;
                         break;
                     }
                 }
-
+                else {
+                    //
+                    // Unknown case, need investigation and update.
+                    //
+                    ulResult = ErrShadowWin32kGlobalsNotFound;
+                    break;
+                }
 
                 //
                 // Remember table offset.

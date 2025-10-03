@@ -4,9 +4,9 @@
 *
 *  TITLE:       EXTRASSSDT.C
 *
-*  VERSION:     2.09
+*  VERSION:     2.10
 *
-*  DATE:        22 Aug 2025
+*  DATE:        03 Oct 2025
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -1001,6 +1001,7 @@ VOID SdtListCreate(
         CallbackParam.lParam = 0;
         CallbackParam.Value = pDlgContext->DialogMode;
         ListView_SortItemsEx(pDlgContext->ListView, &SdtDlgCompareFunc, (LPARAM)&CallbackParam);
+        SetForegroundWindow(pDlgContext->hwndDlg);
         SetFocus(pDlgContext->ListView);
     }
 }
