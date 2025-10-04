@@ -1,14 +1,1 @@
-CrossVmEvent - new Win11 object
-CrossVmMutant - new Win11 object
-CpuPartition - new Win11 object, unnamed objects
-EtwSessionDemuxEntry - new Win10 object
-NetworkNamespace - managed by NDIS.sys (renamed to NdisCmState in RS1)
-ProcessStateChange - new 21H1 object
-ThreadStateChange - new 21H1 object
-PsSiloContextNonPaged - new RS1 object
-PsSiloContextPaged - new RS1 object
-SchedulerSharedData - new win11 22h2+ object, unnamed objects
 Silo (r3 interface removed in 10240 release, object removed in TH2 builds)
-VirtualKey - new RS1 object (not present in RS2)
-VRegConfigurationContext - new RS1 object
-DxgkDisplayMuxSwitch - new 25H2 object
