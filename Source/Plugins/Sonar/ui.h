@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2019 - 2022
+*  (C) COPYRIGHT AUTHORS, 2019 - 2025
 *
 *  TITLE:       UI.H
 *
-*  VERSION:     1.15
+*  VERSION:     1.20
 *
-*  DATE:        10 Jun 2022
+*  DATE:        03 Oct 2025
 *
 *  WinObjEx64 Sonar UI constants, definitions and includes.
 *
@@ -35,20 +35,6 @@
 
 #define Y_SPLITTER_SIZE 4
 #define Y_SPLITTER_MIN  100
-
-#define DefaultSystemDpi            96
-
-#define SCALE_DPI_VALUE(Value, CurrentDPI) MulDiv(Value, CurrentDPI, DefaultSystemDpi)
-
-typedef struct _TL_SUBITEMS_FIXED {
-    ULONG       Count;
-    ULONG       ColorFlags;
-    COLORREF    BgColor;
-    COLORREF    FontColor;
-    PVOID       UserParam;
-    LPTSTR      CustomTooltip;
-    LPTSTR      Text[2];
-} TL_SUBITEMS_FIXED, * PTL_SUBITEMS_FIXED;
 
 typedef struct _SONARCONTEXT {
     //

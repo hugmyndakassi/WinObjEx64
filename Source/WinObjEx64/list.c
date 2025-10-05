@@ -4,9 +4,9 @@
 *
 *  TITLE:       LIST.C
 *
-*  VERSION:     2.09
+*  VERSION:     2.10
 *
-*  DATE:        19 Aug 2025
+*  DATE:        03 Oct 2025
 *
 *  Program main object listing and search logic.
 *
@@ -17,6 +17,7 @@
 *
 *******************************************************************************/
 #include "global.h"
+#include "props/propTypeConsts.h"
 
 HANDLE ListObjectsHeap = NULL;
 HANDLE TreeObjectsHeap = NULL;
@@ -545,7 +546,9 @@ VOID AddListViewItem(
         case OBTYPE_HASH_TYPE:
             bFound = supQueryTypeInfo(&Entry->Name,
                 szBuffer,
-                MAX_PATH);
+                MAX_PATH,
+                MAX_KNOWN_POOL_TYPES,
+                a_PoolTypes);
             break;
         }
     }

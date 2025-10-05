@@ -19,6 +19,9 @@
     <Filter Include="treelist">
       <UniqueIdentifier>{83c6e752-f5b5-48a7-8e6f-231cba8a450d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ntos">
+      <UniqueIdentifier>{315785cb-45b6-49b7-ad7e-eb6925ca5197}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -57,6 +60,18 @@
     <ClCompile Include="..\..\Shared\minirtl\_strncpy.c">
       <Filter>minirtl</Filter>
     </ClCompile>
+    <ClCompile Include="..\utils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\ntos\ntsup.c">
+      <Filter>ntos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\minirtl\_strncmp.c">
+      <Filter>minirtl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\minirtl\hextou64.c">
+      <Filter>minirtl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">
@@ -82,6 +97,18 @@
     </ClInclude>
     <ClInclude Include="..\..\Shared\treelist\treelist.h">
       <Filter>treelist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\ntos\apisetx.h">
+      <Filter>ntos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\ntos\ntos.h">
+      <Filter>ntos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\ntos\ntsup.h">
+      <Filter>ntos</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

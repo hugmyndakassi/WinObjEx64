@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2020 - 2021
+*  (C) COPYRIGHT AUTHORS, 2020 - 2025
 *
 *  TITLE:       GLOBAL.H
 *
-*  VERSION:     1.00
+*  VERSION:     1.20
 *
-*  DATE:        01 Oct 2021
+*  DATE:        03 Oct 2025
 *
 *  Common header file for the Windows Object Explorer ImageScope plugin.
 *
@@ -51,7 +51,6 @@
 #include "sdk/extdef.h"
 #include "resource.h"
 #include "query.h"
-#include "sup.h"
 #include "ui.h"
 
 //declared in main.c
@@ -65,3 +64,4 @@ extern WINOBJEX_PLUGIN* g_plugin;
 #define kdDebugPrint(f, ...) 
 #endif
 
+#include "utils.h"

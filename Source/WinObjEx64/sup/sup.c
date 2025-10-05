@@ -4,9 +4,9 @@
 *
 *  TITLE:       SUP.C
 *
-*  VERSION:     2.09
+*  VERSION:     2.10
 *
-*  DATE:        11 Aug 2025
+*  DATE:        03 Oct 2025
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -16,7 +16,6 @@
 *******************************************************************************/
 #include "global.h"
 #include "treelist/treelist.h"
-#include "props/propTypeConsts.h"
 
 #ifndef OBEX_DEFINE_GUID
 #define OBEX_DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
@@ -2554,7 +2553,9 @@ BOOL supQueryWinstationDescription(
 BOOL supQueryTypeInfo(
     _In_ PUNICODE_STRING TypeName,
     _Inout_ LPWSTR Buffer,
-    _In_ DWORD cchBuffer //size of buffer in chars
+    _In_ DWORD BufferSize, //size of buffer in chars
+    _In_ DWORD KnownPoolTypesCount,
+    _In_ PVALUE_DESC PoolTypes
 )
 {
     BOOL  bResult = FALSE;
@@ -2564,7 +2565,7 @@ BOOL supQueryTypeInfo(
     POBTYPE_ENTRY objectEntry;
 
     if (Buffer == NULL ||
-        cchBuffer < MAX_PATH)
+        BufferSize < MAX_PATH)
     {
         return FALSE;
     }
@@ -2579,12 +2580,12 @@ BOOL supQueryTypeInfo(
 
         if (RtlEqualUnicodeString(objectEntry->TypeName, TypeName, TRUE)) {
 
-            for (nPool = 0; nPool < MAX_KNOWN_POOL_TYPES; nPool++) {
-                if (objectEntry->PoolType == a_PoolTypes[nPool].dwValue) {
+            for (nPool = 0; nPool < KnownPoolTypesCount; nPool++) {
+                if (objectEntry->PoolType == PoolTypes[nPool].dwValue) {
                     _strncpy(Buffer,
-                        cchBuffer,
-                        a_PoolTypes[nPool].lpDescription,
-                        _strlen(a_PoolTypes[nPool].lpDescription));
+                        BufferSize,
+                        PoolTypes[nPool].lpDescription,
+                        _strlen(PoolTypes[nPool].lpDescription));
                     break;
                 }
             }

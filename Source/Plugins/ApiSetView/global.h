@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2019 - 2021
+*  (C) COPYRIGHT AUTHORS, 2019 - 2025
 *
 *  TITLE:       GLOBAL.H
 *
-*  VERSION:     1.11
+*  VERSION:     1.20
 *
-*  DATE:        01 Oct 2021
+*  DATE:        03 Oct 2025
 *
 *  Common header file for the Windows Object Explorer ApiSetView plugin.
 *
@@ -56,3 +56,5 @@
 // Declared in main.c
 //
 extern GUI_CONTEXT g_ctx;
+
+#include "utils.h"

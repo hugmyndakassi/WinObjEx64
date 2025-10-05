@@ -107,6 +107,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Shared\minirtl\hextou64.c" />
     <ClCompile Include="..\..\Shared\minirtl\u64tohex.c" />
     <ClCompile Include="..\..\Shared\minirtl\_strcat.c" />
     <ClCompile Include="..\..\Shared\minirtl\_strcmp.c" />
@@ -114,13 +115,14 @@
     <ClCompile Include="..\..\Shared\minirtl\_strcpy.c" />
     <ClCompile Include="..\..\Shared\minirtl\_strlen.c" />
     <ClCompile Include="..\..\Shared\minirtl\_strncmp.c" />
+    <ClCompile Include="..\..\Shared\minirtl\_strncmpi.c" />
     <ClCompile Include="..\..\Shared\minirtl\_strncpy.c" />
     <ClCompile Include="..\..\Shared\ntos\ntsup.c" />
     <ClCompile Include="..\..\Shared\tabs\tabsctrl.c" />
     <ClCompile Include="..\..\Shared\treelist\treelist.c" />
+    <ClCompile Include="..\utils.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="query.c" />
-    <ClCompile Include="sup.c" />
     <ClCompile Include="ui.c" />
   </ItemGroup>
   <ItemGroup>
@@ -132,10 +134,10 @@
     <ClInclude Include="..\..\Shared\tabs\tabsctrl.h" />
     <ClInclude Include="..\..\Shared\treelist\treelist.h" />
     <ClInclude Include="..\plugin_def.h" />
+    <ClInclude Include="..\utils.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="query.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="sup.h" />
     <ClInclude Include="ui.h" />
   </ItemGroup>
   <ItemGroup>

@@ -4,9 +4,9 @@
 *
 *  TITLE:       QUERY.C
 *
-*  VERSION:     1.15
+*  VERSION:     1.20
 *
-*  DATE:        22 Aug 2025
+*  DATE:        03 Oct 2025
 *
 *  Query and output ApiSet specific data.
 *
@@ -52,37 +52,6 @@ VOID DisplayErrorText(
 #else
     MessageBox(g_ctx.MainWindow, ErrorMsg, NULL, MB_ICONERROR);
 #endif
-}
-
-/*
-* TreeListAddItem
-*
-* Purpose:
-*
-* Insert new treelist item.
-*
-*/
-HTREEITEM TreeListAddItem(
-    _In_ HWND TreeList,
-    _In_opt_ HTREEITEM hParent,
-    _In_ UINT mask,
-    _In_ UINT state,
-    _In_ UINT stateMask,
-    _In_opt_ LPWSTR pszText,
-    _In_opt_ PVOID subitems
-)
-{
-    TVINSERTSTRUCT tvitem;
-    PTL_SUBITEMS si = (PTL_SUBITEMS)subitems;
-
-    RtlZeroMemory(&tvitem, sizeof(tvitem));
-    tvitem.hParent = hParent;
-    tvitem.item.mask = mask;
-    tvitem.item.state = state;
-    tvitem.item.stateMask = stateMask;
-    tvitem.item.pszText = pszText;
-    tvitem.hInsertAfter = TVI_LAST;
-    return TreeList_InsertTreeItem(TreeList, &tvitem, si);
 }
 
 /*
@@ -212,7 +181,7 @@ HTREEITEM OutNamespaceEntry(
     tlSubItems.Text[1] = T_EmptyString;
     tlSubItems.Count = 2;
 
-    h_tviRootItem = TreeListAddItem(
+    h_tviRootItem = supTreeListAddItem(
         g_ctx.TreeList,
         RootItem,
         TVIF_TEXT | TVIF_STATE,
@@ -233,7 +202,7 @@ HTREEITEM OutNamespaceEntry(
                 tlSubItems.Text[1] = T_EmptyString;
                 tlSubItems.Count = 2;
 
-                TreeListAddItem(
+                supTreeListAddItem(
                     g_ctx.TreeList,
                     h_tviRootItem,
                     TVIF_TEXT | TVIF_STATE,
@@ -255,7 +224,7 @@ HTREEITEM OutNamespaceEntry(
             tlSubItems.Text[0] = szBuffer;
             tlSubItems.Text[1] = T_EmptyString;
             tlSubItems.Count = 2;
-            TreeListAddItem(
+            supTreeListAddItem(
                 g_ctx.TreeList,
                 h_tviRootItem,
                 TVIF_TEXT | TVIF_STATE,
@@ -331,7 +300,7 @@ void OutNamespaceValue(
         tlSubItems.Text[1] = T_EmptyString;
     }
 
-    TreeListAddItem(
+    supTreeListAddItem(
         g_ctx.TreeList,
         RootItem,
         TVIF_TEXT | TVIF_STATE,
@@ -710,7 +679,7 @@ VOID WINAPI ListApiSetFromFileWorker(
     //
     // Parse and output apiset.
     //
-    h_tviRootItem = TreeListAddItem(
+    h_tviRootItem = supTreeListAddItem(
         g_ctx.TreeList,
         (HTREEITEM)NULL,
         TVIF_TEXT | TVIF_STATE,
@@ -721,7 +690,7 @@ VOID WINAPI ListApiSetFromFileWorker(
 
     if (h_tviRootItem) {
 
-        h_tviSubItem = TreeListAddItem(
+        h_tviSubItem = supTreeListAddItem(
             g_ctx.TreeList,
             (HTREEITEM)h_tviRootItem,
             TVIF_TEXT | TVIF_STATE,

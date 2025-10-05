@@ -2,11 +2,11 @@
 *
 *  (C) COPYRIGHT AUTHORS, 2020 - 2025
 *
-*  TITLE:       SUP.H
+*  TITLE:       UTILS.H
 *
-*  VERSION:     1.11
+*  VERSION:     1.20
 *
-*  DATE:        22 Aug 2025
+*  DATE:        03 Oct 2025
 *
 *  Common header file for the plugin support routines.
 *
@@ -16,13 +16,50 @@
 * PARTICULAR PURPOSE.
 *
 *******************************************************************************/
+
+#if defined (_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
+#endif
 
-PVOID supHeapAlloc(
-    _In_ SIZE_T Size);
+#ifndef PLUGIN_UTILS_H
+#define PLUGIN_UTILS_H
 
-BOOL supHeapFree(
-    _In_ PVOID Memory);
+#ifndef _WINDOWS_
+#include <Windows.h>
+#endif
+
+#pragma warning(push)
+#pragma warning(disable: 4005) //macro redefinition
+#include <ntstatus.h>
+#pragma warning(pop)
+
+#include "ntos/ntos.h"
+#include "ntos/ntsup.h"
+#include <strsafe.h>
+
+#define _NTDEF_
+#include <ntsecapi.h>
+#undef _NTDEF_
+
+#include "minirtl/minirtl.h"
+#include "tabs/tabsctrl.h"
+#include "treelist/treelist.h"
+
+#define supHeapAlloc ntsupHeapAlloc
+#define supHeapFree ntsupHeapFree
+
+#define DefaultSystemDpi            96
+#define ScaleDPI(Value, CurrentDPI) MulDiv(Value, CurrentDPI, DefaultSystemDpi)
+
+typedef struct _TL_SUBITEMS_FIXED {
+    ULONG       Count;
+    ULONG       ColorFlags;
+    COLORREF    BgColor;
+    COLORREF    FontColor;
+    PVOID       UserParam;
+    LPTSTR      CustomTooltip;
+    LPTSTR      Text[2];
+} TL_SUBITEMS_FIXED, * PTL_SUBITEMS_FIXED;
 
 VOID supSetWaitCursor(
     _In_ BOOL fSet);
@@ -40,7 +77,8 @@ BOOL supSaveDialogExecute(
 BOOL supListViewExportToFile(
     _In_ LPWSTR FileName,
     _In_ HWND WindowHandle,
-    _In_ HWND ListView);
+    _In_ HWND ListView,
+    _In_ LPWSTR FileFilter);
 
 VOID supStatusBarSetText(
     _In_ HWND hwndStatusBar,
@@ -103,4 +141,35 @@ BOOL supDuplicateUnicodeString(
     _Out_ PUNICODE_STRING DestinationString,
     _In_ PUNICODE_STRING SourceString);
 
+BOOL supTreeListAddCopyValueItem(
+    _In_ HMENU hMenu,
+    _In_ HWND hwndTreeList,
+    _In_ UINT uId,
+    _In_ UINT uPos,
+    _In_ LPARAM lParam,
+    _In_ INT * pSubItemHit);
 
+BOOL supGetWin32FileName(
+    _In_ LPWSTR FileName,
+    _Inout_ LPWSTR Win32FileName,
+    _In_ SIZE_T ccWin32FileName);
+
+INT supGetMaxCompareTwoFixedStrings(
+    _In_ HWND ListView,
+    _In_ LPARAM lParam1,
+    _In_ LPARAM lParam2,
+    _In_ LPARAM lParamSort,
+    _In_ BOOL Inverse);
+
+INT supGetMaxOfTwoU64FromHex(
+    _In_ HWND ListView,
+    _In_ LPARAM lParam1,
+    _In_ LPARAM lParam2,
+    _In_ LPARAM lParamSort,
+    _In_ BOOL Inverse);
+
+BOOL supTreeListCopyItemValueToClipboard(
+    _In_ HWND hwndTreeList,
+    _In_ INT tlSubItemHit);
+
+#endif /* PLUGIN_UTILS_H */

@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2019 - 2022
+*  (C) COPYRIGHT AUTHORS, 2019 - 2025
 *
 *  TITLE:       UI.H
 *
-*  VERSION:     1.13
+*  VERSION:     1.20
 *
-*  DATE:        10 Jun 2022
+*  DATE:        03 Oct 2025
 *
 *  WinObjEx64 ApiSetView UI constants, definitions and includes.
 *
@@ -50,13 +50,3 @@ typedef struct _GUI_CONTEXT {
     //
     WINOBJEX_PARAM_BLOCK ParamBlock;
 } GUI_CONTEXT, *PGUI_CONTEXT;
-
-typedef struct _TL_SUBITEMS_FIXED {
-    ULONG       Count;
-    ULONG       ColorFlags;
-    COLORREF    BgColor;
-    COLORREF    FontColor;
-    PVOID       UserParam;
-    LPTSTR      CustomTooltip;
-    LPTSTR      Text[2];
-} TL_SUBITEMS_FIXED, * PTL_SUBITEMS_FIXED;
