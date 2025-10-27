@@ -57,14 +57,14 @@
     <ClCompile Include="..\..\Shared\minirtl\_strncmp.c">
       <Filter>minirtl</Filter>
     </ClCompile>
-    <ClCompile Include="sup.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Shared\minirtl\_strncmpi.c">
       <Filter>minirtl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\minirtl\_strcmpi.c">
       <Filter>minirtl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,11 +98,11 @@
     <ClInclude Include="..\..\Shared\ntos\ntsup.h">
       <Filter>ntos</Filter>
     </ClInclude>
-    <ClInclude Include="sup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Shared\ntos\ntbuilds.h">
       <Filter>ntos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

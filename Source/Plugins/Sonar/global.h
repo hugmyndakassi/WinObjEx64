@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2019 - 2021
+*  (C) COPYRIGHT AUTHORS, 2019 - 2025
 *
 *  TITLE:       GLOBAL.H
 *
-*  VERSION:     1.03
+*  VERSION:     1.20
 *
-*  DATE:        27 July 2021
+*  DATE:        03 Oct 2025
 *
 *  Common header file for the Windows Object Explorer Sonar plugin.
 *
@@ -45,7 +45,7 @@
 #include "ntos/ntsup.h"
 #include "ntos/ntbuilds.h"
 #include "plugin_def.h"
-#include "sup.h"
+#include "utils.h"
 #include "ui.h"
 #include "resource.h"
 #include "ndis.h"

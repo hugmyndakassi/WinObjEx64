@@ -4,9 +4,9 @@
 *
 *  TITLE:       W32K.C
 *
-*  VERSION:     2.08
+*  VERSION:     2.10
 *
-*  DATE:        10 Jun 2025
+*  DATE:        03 Oct 2025
 *
 *  Win32k syscall table actual handlers resolving routines.
 *
@@ -214,7 +214,7 @@ ULONG SdtpQueryW32GetWin32kApiSetTableOffset(
     _In_ HMODULE hModule
 )
 {
-    ULONG Index, c, ScanBytes, InstCount;
+    ULONG Index, matchCount, scanBytes, instCount;
     PBYTE ptrCode;
     hde64s hs;
 
@@ -224,9 +224,9 @@ ULONG SdtpQueryW32GetWin32kApiSetTableOffset(
     }
 
     Index = 0;
-    c = 0;
-    ScanBytes = (g_NtBuildNumber >= NT_WIN11_25H2) ? 64 : 32;
-    InstCount = (g_NtBuildNumber >= NT_WIN11_25H2) ? 2 : 1;
+    matchCount = 0;
+    scanBytes = (g_NtBuildNumber > NT_WIN11_25H2) ? 64 : 32;
+    instCount = (g_NtBuildNumber > NT_WIN11_25H2) ? 2 : 1;
 
     do {
 
@@ -241,14 +241,14 @@ ULONG SdtpQueryW32GetWin32kApiSetTableOffset(
             (hs.flags & F_MODRM) &&
             (hs.opcode == 0x8B))
         {
-            c += 1;
-            if (c >= InstCount)
+            matchCount += 1;
+            if (matchCount >= instCount)
                 return hs.disp.disp32;
         }
 
         Index += hs.len;
 
-    } while (Index < ScanBytes);
+    } while (Index < scanBytes);
 
     return 0;
 }
@@ -297,8 +297,8 @@ ULONG_PTR SdtpQueryWin32kSessionGlobals(
             return 0;
         }
 
-        if (g_NtBuildNumber >= NT_WIN11_25H2)
-        {
+        if (g_NtBuildNumber > NT_WIN11_25H2) {
+
             Index = 0;
             k = 0;
 
@@ -337,7 +337,7 @@ ULONG_PTR SdtpQueryWin32kSessionGlobals(
                 if (hs.flags & F_ERROR)
                     break;
 
-                //
+                //      
                 // Find W32GetSessionStateForSession call.
                 //
                 if ((hs.len == 5) &&
@@ -864,7 +864,7 @@ NTSTATUS SdtResolveServiceEntryModuleSessionAware(
     hde64s hs;
 
     ULONG offsets[3];
-    ULONG c, k;
+    ULONG offsetIndex, k;
 
     LONG rel;
 
@@ -953,7 +953,7 @@ NTSTATUS SdtResolveServiceEntryModuleSessionAware(
         //
         if (bFound) {
 
-            c = 0;
+            offsetIndex = 0;
             i = 0;
 
             do {
@@ -972,16 +972,16 @@ NTSTATUS SdtResolveServiceEntryModuleSessionAware(
                     // Capture offset
                     //
                     if (hs.flags & F_DISP8)
-                        offsets[c] = hs.disp.disp8;
+                        offsets[offsetIndex] = hs.disp.disp8;
                     else if (hs.flags & F_DISP16)
-                        offsets[c] = hs.disp.disp16;
+                        offsets[offsetIndex] = hs.disp.disp16;
                     else if (hs.flags & F_DISP32)
-                        offsets[c] = hs.disp.disp32;
+                        offsets[offsetIndex] = hs.disp.disp32;
                     else
-                        offsets[c] = 0;
+                        offsets[offsetIndex] = 0;
 
-                    c += 1;
-                    if (c > W32CALL_MAX_OFFSET)
+                    offsetIndex += 1;
+                    if (offsetIndex > W32CALL_MAX_OFFSET)
                         break;
                 }
 
@@ -1010,6 +1010,10 @@ NTSTATUS SdtResolveServiceEntryModuleSessionAware(
             //
             // Offsets found and extracted, proceed with resolving.
             //
+            if (Context->SessionId == 0 || Context->SessionId > 0xFFFF) {
+                resultStatus = STATUS_INVALID_PARAMETER;
+                break;
+            }
 
             resultStatus = STATUS_PROCEDURE_NOT_FOUND;
 
@@ -1277,18 +1281,31 @@ ULONG SdtWin32kInitializeOnce(
                 }
 
                 if (g_NtBuildNumber <= NT_WIN11_24H2) {
+                    //
+                    // gLowSessionGlobalSlots is before any other variables, read as-is
+                    //
                     if (!kdReadSystemMemory(varAddress, &Context->W32Globals.v1, sizeof(W32K_GLOBALS))) {
                         ulResult = ErrShadowWin32kGlobalsNotFound;
                         break;
                     }
                 }
-                else {
+                else if (g_NtBuildNumber <= NT_WIN11_25H2) {
+                    //
+                    // gLowSessionGlobalSlots is in the middle of variables, use offset calculation
+                    //
+                    varAddress -= FIELD_OFFSET(W32K_GLOBALS_V2, gLowSessionGlobalSlots);
                     if (!kdReadSystemMemory(varAddress, &Context->W32Globals.v2, sizeof(W32K_GLOBALS_V2))) {
                         ulResult = ErrShadowWin32kGlobalsNotFound;
                         break;
                     }
                 }
-
+                else {
+                    //
+                    // Unknown case, need investigation and update.
+                    //
+                    ulResult = ErrShadowWin32kGlobalsNotFound;
+                    break;
+                }
 
                 //
                 // Remember table offset.

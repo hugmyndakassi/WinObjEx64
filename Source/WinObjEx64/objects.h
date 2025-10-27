@@ -4,9 +4,9 @@
 *
 *  TITLE:       OBJECTS.H
 *
-*  VERSION:     2.07
+*  VERSION:     2.10
 *
-*  DATE:        11 May 2025
+*  DATE:        03 Oct 2025
 *
 *  Header file for internal Windows object types handling.
 *
@@ -21,7 +21,7 @@
 //
 // Object Type Indexes Used By Program Only 
 //
-// NOT RELATED TO REAL OBJECTS INDEXES
+// NOT RELATED TO KERNEL OBJECT TYPE INDEXES
 // ObjectTypeUnknown and ObjectTypeMax always end this list
 //
 typedef enum _WOBJ_OBJECT_TYPE {
@@ -95,19 +95,19 @@ typedef enum _WOBJ_OBJECT_TYPE {
     ObjectTypeTerminal = 67,
     ObjectTypeTerminalEventQueue = 68,
     ObjectTypeEnergyTracker = 69,
-    ObjectTypeUnknown = 70,
-    ObjectTypeEtwSessionDemuxEntry = ObjectTypeUnknown,
-    ObjectTypeNdisCmState = ObjectTypeUnknown,
-    ObjectTypePsSiloContextNonPaged = ObjectTypeUnknown,
-    ObjectTypePsSiloContextPaged = ObjectTypeUnknown,
-    ObjectTypeVirtualKey = ObjectTypeUnknown,
-    ObjectTypeVRegConfigurationContext = ObjectTypeUnknown,
-    ObjectTypeProcessStateChange = ObjectTypeUnknown,
-    ObjectTypeThreadStateChange = ObjectTypeUnknown,
-    ObjectTypeCpuPartition = ObjectTypeUnknown,
-    ObjectTypeSchedulerSharedData = ObjectTypeUnknown,
-    ObjectTypeCrossVmEvent = ObjectTypeUnknown,
-    ObjectTypeCrossVmMutant = ObjectTypeUnknown,
+    ObjectTypeVRegConfigurationContext = 70,
+    ObjectTypePsSiloContextNonPaged = 71,
+    ObjectTypePsSiloContextPaged = 72,
+    ObjectTypeEtwSessionDemuxEntry = 73,
+    ObjectTypeNdisCmState = 74,
+    ObjectTypeProcessStateChange = 75,
+    ObjectTypeThreadStateChange = 76,
+    ObjectTypeCrossVmEvent = 77,
+    ObjectTypeCrossVmMutant = 78,
+    ObjectTypeSchedulerSharedData = 79,
+    ObjectTypeCpuPartition = 80,
+    ObjectTypeVirtualKey = 81,
+    ObjectTypeUnknown = 82,
     ObjectTypeMax
 } WOBJ_OBJECT_TYPE;
 
@@ -161,57 +161,32 @@ typedef struct _WOBJ_TYPE_DESC {
 //
 // Unused id's
 //
-#define UNUSED_IDI_ICON IDI_ICON_UNKNOWN
-#define UNUSED_IDS_DESC IDS_DESC_UNKNOWN
+#define UNUSED_IDI_ICON                 IDI_ICON_UNKNOWN
+#define UNUSED_IDS_DESC                 IDS_DESC_UNKNOWN
 
-#define IDI_ICON_IORING UNUSED_IDI_ICON
-#define IDI_ICON_ACTIVATIONOBJECT UNUSED_IDI_ICON
-#define IDI_ICON_ACTIVITYREFERENCE UNUSED_IDI_ICON
-#define IDI_ICON_COREMESSAGING UNUSED_IDI_ICON
-#define IDI_ICON_COVERAGESAMPLER UNUSED_IDI_ICON
-#define IDI_ICON_RAWINPUTMANAGER UNUSED_IDI_ICON
-#define IDI_ICON_WAITCOMPLETIONPACKET UNUSED_IDI_ICON
-#define IDI_ICON_IOCOMPLETION_RESERVE UNUSED_IDI_ICON
-#define IDI_ICON_USERAPCRESERVE UNUSED_IDI_ICON
-#define IDI_ICON_ENERGYTRACKER UNUSED_IDI_ICON
-
-#define IDI_ICON_TERMINAL UNUSED_IDI_ICON
-#define IDI_ICON_TERMINALEVENTQUEUE UNUSED_IDI_ICON
-
-#define IDI_ICON_ETWSESSIONDEMUXENTRY UNUSED_IDI_ICON
-#define IDS_DESC_ETWSESSIONDEMUXENTRY UNUSED_IDS_DESC
-
-#define IDI_ICON_NDISCMSTATE UNUSED_IDI_ICON
-#define IDS_DESC_NDISCMSTATE UNUSED_IDS_DESC
-
-#define IDI_ICON_PSSILOCONTEXT UNUSED_IDI_ICON
-#define IDS_DESC_PSSILOCONTEXT UNUSED_IDS_DESC
-
-#define IDS_DESC_PSSILOCONTEXTNP UNUSED_IDS_DESC
-
-#define IDI_ICON_VIRTUALKEY UNUSED_IDI_ICON
-#define IDS_DESC_VIRTUALKEY UNUSED_IDS_DESC
-
-#define IDI_ICON_VREGCFGCTX UNUSED_IDI_ICON
-#define IDS_DESC_VREGCFGCTX UNUSED_IDS_DESC
-
-#define IDI_ICON_PROCESSSTATECHANGE UNUSED_IDI_ICON
-#define IDS_DESC_PROCESSSTATECHANGE UNUSED_IDS_DESC
-
-#define IDI_ICON_THREADSTATECHANGE UNUSED_IDI_ICON
-#define IDS_DESC_THREADSTATECHANGE UNUSED_IDS_DESC
-
-#define IDI_ICON_CPUPARTITION UNUSED_IDI_ICON
-#define IDS_DESC_CPUPARTITION UNUSED_IDS_DESC
-
-#define IDI_ICON_SCHEDULERSHAREDDATA UNUSED_IDI_ICON
-#define IDS_DESC_SCHEDULERSHAREDDATA UNUSED_IDS_DESC
-
-#define IDI_ICON_CROSSVMEVENT UNUSED_IDI_ICON
-#define IDS_DESC_CROSSVMEVENT UNUSED_IDS_DESC
-
-#define IDI_ICON_CROSSVMMUTANT UNUSED_IDI_ICON
-#define IDS_DESC_CROSSVMMUTANT UNUSED_IDS_DESC
+#define IDI_ICON_IORING                 UNUSED_IDI_ICON
+#define IDI_ICON_ACTIVATIONOBJECT       UNUSED_IDI_ICON
+#define IDI_ICON_ACTIVITYREFERENCE      UNUSED_IDI_ICON
+#define IDI_ICON_COREMESSAGING          UNUSED_IDI_ICON
+#define IDI_ICON_COVERAGESAMPLER        UNUSED_IDI_ICON
+#define IDI_ICON_RAWINPUTMANAGER        UNUSED_IDI_ICON
+#define IDI_ICON_WAITCOMPLETIONPACKET   UNUSED_IDI_ICON
+#define IDI_ICON_IOCOMPLETION_RESERVE   UNUSED_IDI_ICON
+#define IDI_ICON_USERAPCRESERVE         UNUSED_IDI_ICON
+#define IDI_ICON_ENERGYTRACKER          UNUSED_IDI_ICON
+#define IDI_ICON_TERMINAL               UNUSED_IDI_ICON
+#define IDI_ICON_TERMINALEVENTQUEUE     UNUSED_IDI_ICON
+#define IDI_ICON_ETWSESSIONDEMUXENTRY   UNUSED_IDI_ICON
+#define IDI_ICON_NDISCMSTATE            UNUSED_IDI_ICON
+#define IDI_ICON_PSSILOCONTEXT          UNUSED_IDI_ICON
+#define IDI_ICON_VIRTUALKEY             UNUSED_IDI_ICON
+#define IDI_ICON_VREGCFGCTX             UNUSED_IDI_ICON
+#define IDI_ICON_PROCESSSTATECHANGE     UNUSED_IDI_ICON
+#define IDI_ICON_THREADSTATECHANGE      UNUSED_IDI_ICON
+#define IDI_ICON_CPUPARTITION           UNUSED_IDI_ICON
+#define IDI_ICON_SCHEDULERSHAREDDATA    UNUSED_IDI_ICON
+#define IDI_ICON_CROSSVMEVENT           UNUSED_IDI_ICON
+#define IDI_ICON_CROSSVMMUTANT          UNUSED_IDI_ICON
 
 extern WOBJ_TYPE_DESC g_TypeUnknown;
 extern WOBJ_TYPE_DESC g_TypeSymbolicLink;
@@ -224,7 +199,7 @@ extern ULONG g_ObjectTypesCount;
 HIMAGELIST ObManagerLoadImageList(
     VOID);
 
-UINT ObManagerGetImageIndexByTypeName(
+INT ObManagerGetImageIndexByTypeName(
     _In_opt_ LPCWSTR lpTypeName);
 
 WOBJ_OBJECT_TYPE ObManagerGetIndexByTypeName(

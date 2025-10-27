@@ -4,9 +4,9 @@
 *
 *  TITLE:       UI.C
 *
-*  VERSION:     1.21
+*  VERSION:     1.22
 *
-*  DATE:        22 Aug 2025
+*  DATE:        03 Oct 2025
 *
 *  WinObjEx64 ImageScope UI.
 *
@@ -1150,7 +1150,7 @@ VOID TabsDumpList(
         return;
     }
 
-    supListViewExportToFile(lpFileName, hWndDlg, hwndList);
+    supListViewExportToFile(lpFileName, hWndDlg, hwndList, T_CSV_FILE_FILTER);
 }
 
 VOID TabsListViewCopyItem(

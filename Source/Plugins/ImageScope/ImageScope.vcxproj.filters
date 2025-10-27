@@ -57,9 +57,6 @@
     <ClCompile Include="..\..\Shared\minirtl\_strncpy.c">
       <Filter>minirtl</Filter>
     </ClCompile>
-    <ClCompile Include="sup.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Shared\ntos\ntsup.c">
       <Filter>ntos</Filter>
     </ClCompile>
@@ -73,6 +70,15 @@
       <Filter>minirtl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\minirtl\_strcat.c">
+      <Filter>minirtl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\minirtl\hextou64.c">
+      <Filter>minirtl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\minirtl\_strncmpi.c">
       <Filter>minirtl</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,14 +113,14 @@
     <ClInclude Include="..\..\Shared\treelist\treelist.h">
       <Filter>treelist</Filter>
     </ClInclude>
-    <ClInclude Include="sup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Shared\sdk\extdef.h">
       <Filter>sdk</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\ntos\ntsup.h">
       <Filter>ntos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utils.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

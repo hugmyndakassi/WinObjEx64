@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2020 - 2022
+*  (C) COPYRIGHT AUTHORS, 2020 - 2025
 *
 *  TITLE:       UI.H
 *
-*  VERSION:     1.02
+*  VERSION:     1.20
 *
-*  DATE:        08 Jun 2022
+*  DATE:        03 Oct 2025
 *
 *  WinObjEx64 ImageScope UI constants, definitions and includes.
 *
@@ -21,10 +21,6 @@
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "uxtheme.lib")
-
-#define DefaultSystemDpi            96
-
-#define ScaleDPI(Value, CurrentDPI) MulDiv(Value, CurrentDPI, DefaultSystemDpi)
 
 #define T_PLUGIN_NAME       TEXT("ImageScope")
 #define IMAGESCOPE_WNDTITLE T_PLUGIN_NAME
@@ -76,16 +72,6 @@ typedef struct _IMS_TAB {
     LPTSTR TabCaption;
 } IMS_TAB;
 
-typedef struct _TL_SUBITEMS_FIXED {
-    ULONG       Count;
-    ULONG       ColorFlags;
-    COLORREF    BgColor;
-    COLORREF    FontColor;
-    PVOID       UserParam;
-    LPTSTR      CustomTooltip;
-    LPTSTR      Text[2];
-} TL_SUBITEMS_FIXED, * PTL_SUBITEMS_FIXED;
-
 typedef struct _VALUE_DESC {
     LPWSTR lpDescription;
     DWORD dwValue;
@@ -97,5 +83,4 @@ LRESULT CALLBACK MainWindowProc(
     _In_ WPARAM wParam,
     _In_ LPARAM lParam);
 
-BOOL RunUI(
-    _In_ GUI_CONTEXT* Context);
+BOOL RunUI(_In_ GUI_CONTEXT* Context);

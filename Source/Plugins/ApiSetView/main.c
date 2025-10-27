@@ -4,9 +4,9 @@
 *
 *  TITLE:       MAIN.C
 *
-*  VERSION:     1.15
+*  VERSION:     1.20
 *
-*  DATE:        22 Aug 2025
+*  DATE:        03 Oct 2025
 *
 *  WinObjEx64 ApiSetView plugin.
 *

@@ -4,9 +4,9 @@
 *
 *  TITLE:       QUERY.C
 *
-*  VERSION:     1.16
+*  VERSION:     1.20
 *
-*  DATE:        14 Jun 2025
+*  DATE:        03 Oct 2025
 *
 *  Query NDIS specific data.
 *
@@ -111,8 +111,8 @@ ULONG_PTR QueryProtocolList(
         miSpace = ntsupGetSystemInfoEx(
             SystemModuleInformation,
             NULL,
-            (PNTSUPMEMALLOC)HeapMemoryAlloc,
-            (PNTSUPMEMFREE)HeapMemoryFree);
+            (PNTSUPMEMALLOC)supHeapAlloc,
+            (PNTSUPMEMFREE)supHeapFree);
 
         if (miSpace == NULL)
             break;
@@ -181,7 +181,7 @@ ULONG_PTR QueryProtocolList(
     } while (FALSE);
 
     if (hModule) FreeLibrary(hModule);
-    if (miSpace) HeapMemoryFree(miSpace);
+    if (miSpace) supHeapFree(miSpace);
 
     return Result;
 }
@@ -193,7 +193,7 @@ ULONG_PTR QueryProtocolList(
 *
 * Return dumped object version aware.
 *
-* Use HeapMemoryFree to free returned buffer.
+* Use supHeapFree to free returned buffer.
 *
 */
 PVOID DumpObjectWithSpecifiedSize(
@@ -210,7 +210,7 @@ PVOID DumpObjectWithSpecifiedSize(
     if (ReadSize) *ReadSize = 0;
     if (ReadVersion) *ReadVersion = 0;
 
-    ObjectBuffer = HeapMemoryAlloc(BufferSize);
+    ObjectBuffer = supHeapAlloc(BufferSize);
     if (ObjectBuffer == NULL) {
         return NULL;
     }
@@ -221,7 +221,7 @@ PVOID DumpObjectWithSpecifiedSize(
         (ULONG)ObjectSize,
         NULL))
     {
-        HeapMemoryFree(ObjectBuffer);
+        supHeapFree(ObjectBuffer);
         return NULL;
     }
 
@@ -240,7 +240,7 @@ PVOID DumpObjectWithSpecifiedSize(
 *
 * Return dumped NDIS_PROTOCOL_BLOCK version aware.
 *
-* Use HeapMemoryFree to free returned buffer.
+* Use supHeapFree to free returned buffer.
 *
 */
 PVOID DumpProtocolBlockVersionAware(
@@ -291,6 +291,7 @@ PVOID DumpProtocolBlockVersionAware(
     case NT_WIN11_22H2:
     case NT_WIN11_23H2:
     case NT_WIN11_24H2:
+    case NT_WIN11_25H2:
     default:
         ObjectSize = sizeof(NDIS_PROTOCOL_BLOCK_18362_25905);
         ObjectVersion = 5;
@@ -312,7 +313,7 @@ PVOID DumpProtocolBlockVersionAware(
 *
 * Return dumped NDIS_OPEN_BLOCK version aware.
 *
-* Use HeapMemoryFree to free returned buffer.
+* Use supHeapFree to free returned buffer.
 *
 */
 PVOID DumpOpenBlockVersionAware(
@@ -364,6 +365,7 @@ PVOID DumpOpenBlockVersionAware(
     case NT_WIN11_22H2:
     case NT_WIN11_23H2:
     case NT_WIN11_24H2:
+    case NT_WIN11_25H2:
     default:
         ObjectSize = sizeof(NDIS_OPEN_BLOCK_22621_25905);
         ObjectVersion = NDIS_OPEN_BLOCK_VERSION_WIN11_22_25H2;
@@ -384,7 +386,7 @@ PVOID DumpOpenBlockVersionAware(
 *
 * Read UNICODE_STRING buffer from kernel.
 *
-* Use HeapMemoryFree to free returned buffer.
+* Use supHeapFree to free returned buffer.
 *
 */
 PVOID DumpUnicodeString(
@@ -426,19 +428,19 @@ PVOID DumpUnicodeString(
         return NULL;
 
     Size = (SIZE_T)tempString.Length + MAX_PATH;
-    DumpedString = (PVOID)HeapMemoryAlloc(Size);
+    DumpedString = (PVOID)supHeapAlloc(Size);
     if (DumpedString) {
         if (!g_ctx.ParamBlock.ReadSystemMemoryEx((ULONG_PTR)tempString.Buffer,
             DumpedString,
             tempString.Length,
             &readBytes))
         {
-            HeapMemoryFree(DumpedString);
+            supHeapFree(DumpedString);
             return NULL;
         }
 
         if (readBytes != tempString.Length) {
-            HeapMemoryFree(DumpedString);
+            supHeapFree(DumpedString);
             return NULL;
         }
     }
@@ -491,6 +493,7 @@ ULONG GetNextProtocolOffset(
     case NT_WIN11_22H2:
     case NT_WIN11_23H2:
     case NT_WIN11_24H2:
+    case NT_WIN11_25H2:
     default:
         Offset = FIELD_OFFSET(NDIS_PROTOCOL_BLOCK_18362_25905, NextProtocol);
         break;
@@ -1209,7 +1212,7 @@ BOOL ReadAndConvertProtocolBlock(
         *ObjectVersion = objectVersion;
     }
 
-    HeapMemoryFree(objectPtr);
+    supHeapFree(objectPtr);
 
     return Result;
 }
@@ -1247,7 +1250,7 @@ BOOL ReadAndConvertOpenBlock(
         *ObjectVersion = objectVersion;
     }
 
-    HeapMemoryFree(objectPtr);
+    supHeapFree(objectPtr);
 
     return Result;
 }

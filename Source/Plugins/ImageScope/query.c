@@ -4,9 +4,9 @@
 *
 *  TITLE:       QUERY.C
 *
-*  VERSION:     1.21
+*  VERSION:     1.22
 *
-*  DATE:        22 Aug 2025
+*  DATE:        03 Oct 2025
 *
 *  ImageScope main logic.
 *

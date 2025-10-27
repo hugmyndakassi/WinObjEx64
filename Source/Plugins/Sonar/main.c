@@ -4,9 +4,9 @@
 *
 *  TITLE:       MAIN.C
 *
-*  VERSION:     1.17
+*  VERSION:     1.20
 *
-*  DATE:        22 Aug 2025
+*  DATE:        03 Oct 2025
 *
 *  WinObjEx64 Sonar plugin.
 *
@@ -101,7 +101,7 @@ INT AddListViewColumn(
     if (ImageIndex != I_IMAGENONE) column.mask |= LVCF_IMAGE;
 
     column.fmt = Format;
-    column.cx = SCALE_DPI_VALUE(Width, g_ctx.CurrentDPI);
+    column.cx = ScaleDPI(Width, g_ctx.CurrentDPI);
     column.pszText = Text;
     column.iSubItem = SubItemIndex;
     column.iOrder = OrderIndex;
@@ -270,14 +270,14 @@ BOOL AddProtocolToTreeList(
             &subitems);
 
         if (lpImageName)
-            HeapMemoryFree(lpImageName);
+            supHeapFree(lpImageName);
 
 
         if ((ULONG_PTR)ProtoBlock->OpenQueue > g_ctx.ParamBlock.SystemRangeStart) {
             bResult = ListOpenQueue(hTreeItem, (ULONG_PTR)ProtoBlock->OpenQueue);
         }
 
-        HeapMemoryFree(lpProtocolName);
+        supHeapFree(lpProtocolName);
     }
 
     return bResult;
@@ -631,8 +631,8 @@ VOID DumpProtocolInfo(
     pModulesList = ntsupGetLoadedModulesListEx(
         FALSE,
         NULL,
-        (PNTSUPMEMALLOC)HeapMemoryAlloc,
-        (PNTSUPMEMFREE)HeapMemoryFree);
+        (PNTSUPMEMALLOC)supHeapAlloc,
+        (PNTSUPMEMFREE)supHeapFree);
 
     if (pModulesList == NULL) {
         StatusBarSetText(TEXT("Error, cannot query system information!"));
@@ -645,7 +645,7 @@ VOID DumpProtocolInfo(
     RtlSecureZeroMemory(&ProtoBlock, sizeof(ProtoBlock));
     if (!ReadAndConvertProtocolBlock(ProtocolAddress, &ProtoBlock, NULL)) {
 
-        HeapMemoryFree(pModulesList);
+        supHeapFree(pModulesList);
 
         StringCchPrintf(szBuffer, RTL_NUMBER_OF(szBuffer),
             TEXT("Error, read NDIS_PROTOCOL_BLOCK at 0x%llX failed!"), ProtocolAddress);
@@ -676,7 +676,7 @@ VOID DumpProtocolInfo(
     if (DumpedString) {
         StringCchPrintf(szBuffer, 64, TEXT("0x%llX"), (ULONG_PTR)ProtoBlock.BindDeviceName);
         xxxDumpProtocolBlock(TEXT("BindDeviceName"), szBuffer, DumpedString);
-        HeapMemoryFree(DumpedString);
+        supHeapFree(DumpedString);
     }
 
     //
@@ -686,7 +686,7 @@ VOID DumpProtocolInfo(
     if (DumpedString) {
         StringCchPrintf(szBuffer, 64, TEXT("0x%llX"), (ULONG_PTR)ProtoBlock.RootDeviceName);
         xxxDumpProtocolBlock(TEXT("RootDeviceName"), szBuffer, DumpedString);
-        HeapMemoryFree(DumpedString);
+        supHeapFree(DumpedString);
     }
 
     //
@@ -704,7 +704,7 @@ VOID DumpProtocolInfo(
 
     DumpHandlers(ProtocolHandlers, _countof(ProtocolHandlers), g_lpszProtocolBlockHandlers, pModulesList);
 
-    HeapMemoryFree(pModulesList);
+    supHeapFree(pModulesList);
 
     StatusBarSetText(TEXT("List protocol information - OK"));
 }
@@ -737,8 +737,8 @@ VOID DumpOpenBlockInfo(
     pModulesList = ntsupGetLoadedModulesListEx(
         FALSE,
         NULL,
-        (PNTSUPMEMALLOC)HeapMemoryAlloc,
-        (PNTSUPMEMFREE)HeapMemoryFree);
+        (PNTSUPMEMALLOC)supHeapAlloc,
+        (PNTSUPMEMFREE)supHeapFree);
 
     if (pModulesList == NULL) {
         StatusBarSetText(TEXT("Error, cannot query system information!"));
@@ -751,7 +751,7 @@ VOID DumpOpenBlockInfo(
     RtlSecureZeroMemory(&OpenBlock, sizeof(OpenBlock));
     if (!ReadAndConvertOpenBlock(OpenBlockAddress, &OpenBlock, NULL)) {
 
-        HeapMemoryFree(pModulesList);
+        supHeapFree(pModulesList);
 
         StringCchPrintf(szBuffer, RTL_NUMBER_OF(szBuffer),
             TEXT("Error, read NDIS_OPEN_BLOCK at 0x%llX failed!"), OpenBlockAddress);
@@ -768,7 +768,7 @@ VOID DumpOpenBlockInfo(
     if (DumpedString) {
         StringCchPrintf(szBuffer, 64, TEXT("0x%llX"), (ULONG_PTR)OpenBlock.BindDeviceName);
         xxxDumpProtocolBlock(TEXT("BindDeviceName"), szBuffer, DumpedString);
-        HeapMemoryFree(DumpedString);
+        supHeapFree(DumpedString);
     }
 
     //
@@ -778,7 +778,7 @@ VOID DumpOpenBlockInfo(
     if (DumpedString) {
         StringCchPrintf(szBuffer, 64, TEXT("0x%llX"), (ULONG_PTR)OpenBlock.RootDeviceName);
         xxxDumpProtocolBlock(TEXT("RootDeviceName"), szBuffer, DumpedString);
-        HeapMemoryFree(DumpedString);
+        supHeapFree(DumpedString);
     }
 
     //
@@ -787,7 +787,7 @@ VOID DumpOpenBlockInfo(
     RtlCopyMemory(OpenBlockHandlers, &OpenBlock.Handlers, sizeof(OpenBlockHandlers));
 
     DumpHandlers(OpenBlockHandlers, _countof(OpenBlockHandlers), g_lpszOpenBlockHandlers, pModulesList);
-    HeapMemoryFree(pModulesList);
+    supHeapFree(pModulesList);
 
     StatusBarSetText(TEXT("List open block information - OK"));
 }
@@ -1308,8 +1308,8 @@ DWORD WINAPI PluginThread(
             WS_VISIBLE | WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            SCALE_DPI_VALUE(800, g_ctx.CurrentDPI),
-            SCALE_DPI_VALUE(600, g_ctx.CurrentDPI),
+            ScaleDPI(800, g_ctx.CurrentDPI),
+            ScaleDPI(600, g_ctx.CurrentDPI),
             NULL,
             NULL,
             g_thisDll,
@@ -1435,15 +1435,15 @@ DWORD WINAPI PluginThread(
         RtlSecureZeroMemory(&hdritem, sizeof(hdritem));
         hdritem.mask = HDI_FORMAT | HDI_TEXT | HDI_WIDTH;
         hdritem.fmt = HDF_LEFT | HDF_BITMAP_ON_RIGHT | HDF_STRING;
-        hdritem.cxy = SCALE_DPI_VALUE(300, g_ctx.CurrentDPI);
+        hdritem.cxy = ScaleDPI(300, g_ctx.CurrentDPI);
         hdritem.pszText = TEXT("Protocol");
         TreeList_InsertHeaderItem(g_ctx.TreeList, 0, &hdritem);
 
-        hdritem.cxy = SCALE_DPI_VALUE(130, g_ctx.CurrentDPI);
+        hdritem.cxy = ScaleDPI(130, g_ctx.CurrentDPI);
         hdritem.pszText = TEXT("Object");
         TreeList_InsertHeaderItem(g_ctx.TreeList, 1, &hdritem);
 
-        hdritem.cxy = SCALE_DPI_VALUE(200, g_ctx.CurrentDPI);
+        hdritem.cxy = ScaleDPI(200, g_ctx.CurrentDPI);
         hdritem.pszText = TEXT("Additional Information");
         TreeList_InsertHeaderItem(g_ctx.TreeList, 2, &hdritem);
 

@@ -669,7 +669,9 @@ BOOL supQuerySectionFileInfo(
 BOOL supQueryTypeInfo(
     _In_ PUNICODE_STRING TypeName,
     _Inout_ LPWSTR Buffer,
-    _In_ DWORD cchhBuffer);
+    _In_ DWORD BufferSize,
+    _In_ DWORD KnownPoolTypesCount,
+    _In_ PVALUE_DESC PoolTypes);
 
 BOOL supQueryDriverDescription(
     _In_ LPCWSTR lpDriverName,
