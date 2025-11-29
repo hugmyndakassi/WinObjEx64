@@ -6,7 +6,7 @@
 *
 *  VERSION:     2.10
 *
-*  DATE:        19 Sep 2025
+*  DATE:        19 Nov 2025
 *
 *  MINIMUM SUPPORTED OS WINDOWS 7
 *
@@ -131,6 +131,9 @@ ULONG_PTR ObFindAddress(
     hde64s decodedInstruction;
 
     if (!PtrCode || !ScanPattern || !ScanPatternSize || NumberOfBytes < ScanPatternSize)
+        return 0;
+
+    if (ScanPatternSize > ULONG_MAX - sizeof(LONG))
         return 0;
 
     while (currentIndex < NumberOfBytes) {
@@ -2150,6 +2153,9 @@ BOOL ObpEnumeratePrivateNamespaceTable(
 
     if (ListHeap == NULL)
         ListHeap = g_obexHeap;
+
+    if (ListHeap == NULL)
+        return FALSE;
 
     //
     // Dump namespace lookup table.

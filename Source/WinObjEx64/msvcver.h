@@ -4,11 +4,11 @@
 *
 *  TITLE:       MSVCVER.H
 *
-*  VERSION:     2.08
+*  VERSION:     2.10
 *
-*  DATE:        13 Jun 2025
+*  DATE:        29 Nov 2025
 *
-*  Visual Studio compiler version determination.
+*  Visual Studio compiler version determination. 
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -21,8 +21,18 @@
 
 #if defined _MSC_VER && _MSC_FULL_VER
 
+    // Visual Studio 2026 (18.x)
+    #if (_MSC_VER >= 1950)
+        #if (_MSC_VER >= 1951)
+            #define VC_VER L"MSVC 2026 (v18.1+)"
+        #elif (_MSC_VER == 1950)
+            #define VC_VER L"MSVC 2026 (v18.0)"
+        #else
+            #define VC_VER L"MSVC 2026"
+        #endif
+
     // Visual Studio 2022 (17.x)
-    #if (_MSC_VER >= 1930) 
+    #elif (_MSC_VER >= 1930 && _MSC_VER < 1950)
         #if (_MSC_VER >= 1938)
             #define VC_VER L"MSVC 2022 (v17.8)"
         #elif (_MSC_VER >= 1937)
@@ -46,7 +56,7 @@
     // Visual Studio 2019 (16.x)
     #elif (_MSC_VER >= 1920 && _MSC_VER < 1930)
         #if (_MSC_VER == 1929)
-            #define VC_VER L"MSVC 2019 (v16.10-v16.11)"
+            #define VC_VER L"MSVC 2019 (v16.10-v16. 11)"
         #elif (_MSC_VER == 1928)
             #define VC_VER L"MSVC 2019 (v16.8-v16.9)"
         #elif (_MSC_VER == 1927)
@@ -56,7 +66,7 @@
         #elif (_MSC_VER == 1925)
             #define VC_VER L"MSVC 2019 (v16.5)"
         #elif (_MSC_VER == 1924)
-            #define VC_VER L"MSVC 2019 (v16.4)"
+            #define VC_VER L"MSVC 2019 (v16. 4)"
         #elif (_MSC_VER == 1923)
             #define VC_VER L"MSVC 2019 (v16.3)"
         #elif (_MSC_VER == 1922)
@@ -78,7 +88,7 @@
     #elif (_MSC_VER == 1914)
         #define VC_VER L"MSVC 2017 (v15.7)"
     #elif (_MSC_VER == 1913)
-        #define VC_VER L"MSVC 2017 (v15.6)"
+        #define VC_VER L"MSVC 2017 (v15. 6)"
     #elif (_MSC_VER == 1912)
         #define VC_VER L"MSVC 2017 (v15.5)"
     #elif (_MSC_VER == 1911)
