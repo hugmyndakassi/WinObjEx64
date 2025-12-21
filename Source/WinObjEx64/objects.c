@@ -6,7 +6,7 @@
 *
 *  VERSION:     2.10
 *
-*  DATE:        03 Oct 2025
+*  DATE:        22 Nov 2025
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -207,14 +207,16 @@ ULONG g_ObjectTypesCount = RTL_NUMBER_OF(gpObjectTypes);
 static WOBJ_TYPE_DESC* g_TypeIndexLookup[MAX_OBJECT_TYPE_INDEX + 1];
 
 // Hash table for type names
-typedef struct _OBTYPE_HASH_ENTRY {
+typedef struct _OBTYPE_HASH_NODE {
     ULONG NameHash;
     WOBJ_TYPE_DESC* TypeDesc;
-} OBTYPE_HASH_ENTRY, * POBTYPE_HASH_ENTRY;
+    struct _OBTYPE_HASH_NODE* Next;
+} OBTYPE_HASH_NODE, * POBTYPE_HASH_NODE;
 
 // Hashtable for types
 #define HASH_TABLE_SIZE 256
-static OBTYPE_HASH_ENTRY g_TypeHashTable[HASH_TABLE_SIZE];
+static OBTYPE_HASH_NODE* g_TypeHashTable[HASH_TABLE_SIZE];
+static OBTYPE_HASH_NODE g_HashNodePool[ObjectTypeMax];
 
 // One-time init
 static INIT_ONCE g_LookupTablesInitOnce = INIT_ONCE_STATIC_INIT;
@@ -252,18 +254,21 @@ BOOL CALLBACK ObManagerInitOnceCallback(
     _Out_opt_ PVOID* Context
 )
 {
-    ULONG i, k;
-    ULONG hashIndex;
+    ULONG i, hashIndex;
+    POBTYPE_HASH_NODE node;
     WOBJ_OBJECT_TYPE typeIndex;
+#ifdef _DEBUG
+    ULONG k;
+#endif
 
     UNREFERENCED_PARAMETER(InitOnce);
     UNREFERENCED_PARAMETER(Parameter);
 
     RtlSecureZeroMemory(g_TypeIndexLookup, sizeof(g_TypeIndexLookup));
     RtlSecureZeroMemory(g_TypeHashTable, sizeof(g_TypeHashTable));
+    RtlSecureZeroMemory(g_HashNodePool, sizeof(g_HashNodePool));
 
 #if _DEBUG
-    // Verify gpObjectTypes is sorted (case-insensitive)
     if (g_ObjectTypesCount > 1) {
         for (k = 1; k < g_ObjectTypesCount; k++) {
             if (_strcmpi(gpObjectTypes[k - 1]->Name, gpObjectTypes[k]->Name) > 0) {
@@ -275,7 +280,6 @@ BOOL CALLBACK ObManagerInitOnceCallback(
     }
 #endif
 
-    // Fill lookup tables
     for (i = 0; i < g_ObjectTypesCount; i++) {
 
         typeIndex = gpObjectTypes[i]->Index;
@@ -291,8 +295,12 @@ BOOL CALLBACK ObManagerInitOnceCallback(
 
         if (gpObjectTypes[i]->NameHash != 0) {
             hashIndex = gpObjectTypes[i]->NameHash & (HASH_TABLE_SIZE - 1);
-            g_TypeHashTable[hashIndex].NameHash = gpObjectTypes[i]->NameHash;
-            g_TypeHashTable[hashIndex].TypeDesc = gpObjectTypes[i];
+
+            node = &g_HashNodePool[i];
+            node->NameHash = gpObjectTypes[i]->NameHash;
+            node->TypeDesc = gpObjectTypes[i];
+            node->Next = g_TypeHashTable[hashIndex];
+            g_TypeHashTable[hashIndex] = node;
         }
     }
 
@@ -387,14 +395,19 @@ WOBJ_TYPE_DESC* ObManagerLookupByHash(
 )
 {
     ULONG hashIndex;
+    POBTYPE_HASH_NODE node;
 
     if (NameHash == 0)
         return NULL;
 
     hashIndex = NameHash & (HASH_TABLE_SIZE - 1);
+    node = g_TypeHashTable[hashIndex];
 
-    if (g_TypeHashTable[hashIndex].NameHash == NameHash)
-        return g_TypeHashTable[hashIndex].TypeDesc;
+    while (node != NULL) {
+        if (node->NameHash == NameHash)
+            return node->TypeDesc;
+        node = node->Next;
+    }
 
     return NULL;
 }
@@ -572,7 +585,6 @@ PVOID ObManagerTable()
 VOID ObManagerTest()
 {
     ULONG hashValue;
-
     UINT i;
 
     for (i = 0; i < g_ObjectTypesCount; i++)

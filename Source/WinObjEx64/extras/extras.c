@@ -4,9 +4,9 @@
 *
 *  TITLE:       EXTRAS.C
 *
-*  VERSION:     2.09
+*  VERSION:     2.10
 *
-*  DATE:        22 Aug 2025
+*  DATE:        10 Sep 2025
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -55,11 +55,12 @@ VOID extrasSimpleListResize(
     RECT r, szr;
     HWND hwnd, hwndStatusBar;
 
-    RtlZeroMemory(&r, sizeof(RECT));
-    RtlZeroMemory(&szr, sizeof(RECT));
-
     hwnd = GetDlgItem(hwndDlg, ID_EXTRASLIST);
     hwndStatusBar = GetDlgItem(hwndDlg, ID_EXTRASLIST_STATUSBAR);
+
+    if (hwnd == NULL || hwndStatusBar == NULL)
+        return;
+
     GetClientRect(hwndDlg, &r);
     GetClientRect(hwndStatusBar, &szr);
 

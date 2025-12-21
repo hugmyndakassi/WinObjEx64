@@ -6,7 +6,7 @@
 *
 *  VERSION:     2.10
 *
-*  DATE:        03 Oct 2025
+*  DATE:        20 Dec 2025
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -9588,7 +9588,7 @@ VOID supClipboardCopyUnicodeStringRaw(
     dst = _strcat(copyBuffer, TEXT("] = {"));
 
     src = (BYTE*)String->Buffer;
-    end = (BYTE*)RtlOffsetToPointer(String->Buffer, bytes);
+    end = (BYTE*)RtlOffsetToPointer(String->Buffer, String->Length);
     while (src < end) {
 
         *dst++ = '0';

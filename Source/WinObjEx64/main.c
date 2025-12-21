@@ -4,9 +4,9 @@
 *
 *  TITLE:       MAIN.C
 *
-*  VERSION:     2.09
+*  VERSION:     2.10
 *
-*  DATE:        16 Aug 2025
+*  DATE:        20 Nov 2025
 *
 *  Program entry point and main window handler.
 *
@@ -607,7 +607,6 @@ VOID MainWindowPopupMenuInsertViewSD(
             ID_VIEW_SECURITYDESCRIPTOR,
             hIcon);
 
-        DestroyIcon(hIcon);
     }
 }
 
@@ -753,8 +752,7 @@ LRESULT MainWindowHandleWMNotify(
     TVHITTESTINFO   tvhti;
     LVHITTESTINFO   lvhti;
     POINT           pt;
-
-    OBEX_ITEM *objRef;
+    OBEX_ITEM       *objRef = NULL;
 
     if (hdr) {
 
@@ -1368,6 +1366,9 @@ VOID guiSetMainMenuImages(
 * Purpose:
 *
 * Process messages loop for the main window and sub dialogs.
+* 
+* Returns 0 on normal exit (WM_QUIT received),
+* Returns non-zero on error (GetMessage returned -1).
 *
 */
 INT guiProcessMainMessageLoop(
