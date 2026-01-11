@@ -1,5 +1,5 @@
 # WinObjEx64
-[![Build status](https://ci.appveyor.com/api/projects/status/dxsbgm90sahgwbo0?svg=true)](https://ci.appveyor.com/project/hfiref0x/winobjex64)
+[![Build status](https://img.shields.io/appveyor/build/hfiref0x/winobjex64?logo=appveyor)](https://ci.appveyor.com/project/hfiref0x/winobjex64)
 ![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fhfiref0x%2FWinObjEx64&label=Visitors&countColor=%23263759&style=flat)
 
 ## Windows Object Explorer 64-bit
@@ -253,6 +253,6 @@ This is purely optional, thank you!~
 # Authors
 
 
-(c) 2015 – 2025 WinObjEx64 Project, hfiref0x
+(c) 2015 – 2026 WinObjEx64 Project, hfiref0x
 
 Original WinObjEx (c) 2003 – 2005 Four-F
