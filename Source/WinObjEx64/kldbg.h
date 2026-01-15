@@ -662,7 +662,7 @@ USHORT kdGetAlpcPortTypeIndex();
 *
 */
 __forceinline PVOID ObGetObjectFastReference(
-    _In_ EX_FAST_REF FastRef)
+    _In_ EX_FAST_REF FastRef) //-V813
 {
     return (PVOID)(FastRef.Value & ~MAX_FAST_REFS);
 }

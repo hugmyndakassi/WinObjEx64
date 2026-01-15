@@ -118,7 +118,7 @@ VOID TreeListUpdateTooltips(
                 AddTooltipItemSub(TreeControl, ToolTips, (0x1000 * (i + 1)) + newToolId, (UINT_PTR)item, &subrc);
             }
 
-            break;
+            break; //-V612
         }
         item = TreeView_GetNextVisible(TreeControl, item);
     }

@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2015 - 2025 UGN/HE
+*  (C) COPYRIGHT AUTHORS, 2015 - 2026 UGN/HE
 *
 *  TITLE:       NTSUP_TESTS.C
 *
-*  VERSION:     2.09
+*  VERSION:     2.10
 *
-*  DATE:        19 Aug 2025
+*  DATE:        10 Jan 2026
 *
 *  NTSup test code used while debug.
 *
@@ -359,7 +359,7 @@ VOID FindModuleNameByAddress_InvalidAddress(VOID)
 
     foundEntry = ntsupFindModuleNameByAddress(
         modules,
-        (PVOID)0x1, // very low address, should not belong to system module range
+        ULongToPtr(0x1), // very low address, should not belong to system module range
         buffer,
         _countof(buffer));
 
@@ -521,7 +521,7 @@ VOID GetSystemInfoEx_SystemProcessInformation(VOID)
 
     TEST_ASSERT(retLen > 0);
 
-    if (buffer && retLen > sizeof(SYSTEM_PROCESS_INFORMATION)) {
+    if (retLen > sizeof(SYSTEM_PROCESS_INFORMATION)) {
 
         PSYSTEM_PROCESS_INFORMATION spi = (PSYSTEM_PROCESS_INFORMATION)buffer;
 
@@ -581,7 +581,7 @@ VOID GetSystemInfoEx_InvalidClass(VOID)
     ULONG retLen = 0;
 
     buffer = ntsupGetSystemInfoEx(
-        (SYSTEM_INFORMATION_CLASS)0xFFFFFFFF,
+        (SYSTEM_INFORMATION_CLASS)0xFFFFFFFF, //-V1016
         &retLen,
         (PNTSUPMEMALLOC)TestAlloc,
         (PNTSUPMEMFREE)TestFree);
@@ -786,10 +786,10 @@ VOID HashImageSections_InvalidParams(VOID)
     status = ntsupHashImageSections(NULL, 100, hash, sizeof(hash), ImageTypeLoaded);
     TEST_ASSERT(status == STATUS_INVALID_PARAMETER);
 
-    status = ntsupHashImageSections((PVOID)0x1, 0, hash, sizeof(hash), ImageTypeLoaded);
+    status = ntsupHashImageSections(ULongToPtr(0x1), 0, hash, sizeof(hash), ImageTypeLoaded);
     TEST_ASSERT(status == STATUS_INVALID_PARAMETER);
 
-    status = ntsupHashImageSections((PVOID)0x1, 100, hash, 1, ImageTypeLoaded);
+    status = ntsupHashImageSections(ULongToPtr(0x1), 100, hash, 1, ImageTypeLoaded);
     TEST_ASSERT(status == STATUS_BUFFER_TOO_SMALL);
 
     image = NULL;

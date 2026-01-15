@@ -289,7 +289,7 @@ ULONG_PTR SdtpQueryWin32kSessionGlobals(
     UNREFERENCED_PARAMETER(ImageSize);
 #endif
 
-    if (globalsAddress == 0) {
+    if (globalsAddress == 0) { //-V547
 
         ptrCode = (PBYTE)GetProcAddress(hModule, "W32GetSessionState");
 
@@ -997,7 +997,7 @@ NTSTATUS SdtResolveServiceEntryModuleSessionAware(
         //
         // If offsets not found try extraction from win32k import.
         //
-        if (hostOffset == 0) {
+        if (hostOffset == 0) { //-V1051
 
             resultStatus = SdtResolveModuleFromImportThunk(
                 Context,

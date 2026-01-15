@@ -111,7 +111,7 @@ VOID logAdd(
         Index = g_WinObjLog.Count;
 
         g_WinObjLog.Entries[Index].Type = EntryType;
-        GetSystemTimeAsFileTime((PFILETIME)&g_WinObjLog.Entries[Index].LoggedTime);
+        GetSystemTimeAsFileTime((PFILETIME)&g_WinObjLog.Entries[Index].LoggedTime); //-V1027
         _strncpy(g_WinObjLog.Entries[Index].MessageData,
             WOBJ_MAX_MESSAGE,
             Message ? Message : L"(null)",

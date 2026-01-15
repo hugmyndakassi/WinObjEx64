@@ -117,7 +117,7 @@ BOOLEAN supTestFastEvent(
     _In_ PFAST_EVENT Event
 )
 {
-    return (BOOLEAN)Event->Set;
+    return (BOOLEAN)Event->Set; //-V724
 }
 
 /*

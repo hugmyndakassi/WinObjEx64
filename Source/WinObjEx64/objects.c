@@ -303,8 +303,8 @@ BOOL CALLBACK ObManagerInitOnceCallback(
             g_TypeHashTable[hashIndex] = node;
         }
     }
-
-    if (Context) *Context = (PVOID)1;
+    
+    if (Context) *Context = ULongToPtr(1);
     return TRUE;
 }
 

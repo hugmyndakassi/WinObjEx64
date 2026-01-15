@@ -1,12 +1,12 @@
 /*******************************************************************************
 *
-*  (C) COPYRIGHT AUTHORS, 2016 - 2025
+*  (C) COPYRIGHT AUTHORS, 2016 - 2026
 *
 *  TITLE:       EXTRASDRIVERS.C
 *
-*  VERSION:     2.09
+*  VERSION:     2.10
 *
-*  DATE:        23 Aug 2025
+*  DATE:        12 Jan 2026
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -70,6 +70,19 @@ LPCWSTR CryptAlgoIdRef[] = {
     BCRYPT_SHA384_ALGORITHM,
     BCRYPT_SHA512_ALGORITHM
 };
+
+VOID DrvTooltipFreeBuffer(
+    _In_ EXTRASCONTEXT* Context
+)
+{
+    if (Context == NULL)
+        return;
+
+    if (Context->TooltipBuffer) {
+        supHeapFree(Context->TooltipBuffer);
+        Context->TooltipBuffer = NULL;
+    }
+}
 
 /*
 * DrvListCopyHash
@@ -1308,91 +1321,146 @@ VOID DrvDlgHandleWMCommand(
 *
 */
 VOID DrvListSetTooltip(
+    _In_ EXTRASCONTEXT* Context,
     _In_ HWND ListViewHandle,
-    _In_ HWND ToolTipHandle,
-    _In_ TOOLINFO* ToolInfo,
-    _In_ INT iItem)
+    _In_ INT iItem
+)
 {
     ULONG_PTR drvBase;
-
     BOOL bShimmed;
     GUID shimGUID;
-
     SUP_SHIM_INFO* shimInfo;
+    SIZE_T cchText;
+    SIZE_T cchRemaining;
+    SIZE_T cchWritten;
+    int charsWritten;
+    WCHAR* lpText;
 
-    WCHAR szText[4096];
     WCHAR szBuffer[MAX_PATH];
     WCHAR szNameWithoutExt[MAX_PATH];
 
+    if (Context == NULL)
+        return;
+
+    DrvTooltipFreeBuffer(Context);
+
+    cchText = 4096;
+    lpText = (WCHAR*)supHeapAlloc(cchText * sizeof(WCHAR));
+    if (lpText == NULL)
+        return;
+
+    lpText[0] = 0;
+    cchWritten = 0;
+
     //
-    // Get name
+    // Name
     //
     RtlSecureZeroMemory(&szBuffer, sizeof(szBuffer));
     supGetItemText2(ListViewHandle, iItem,
         COLUMN_DRVLIST_DRIVER_NAME, szBuffer, MAX_PATH);
 
+    charsWritten = RtlStringCchPrintfSecure(&lpText[cchWritten],
+        cchText,
+        TEXT("%ws"),
+        szBuffer);
+
+    if (charsWritten > 0) {
+        cchWritten += charsWritten;
+    }
+
     szNameWithoutExt[0] = 0;
     _filename_noext(szNameWithoutExt, szBuffer);
 
-    RtlSecureZeroMemory(&szText, sizeof(szText));
-    _strcpy(szText, szBuffer);
-
     //
-    // Get base.
+    // Base
     //
     szBuffer[0] = 0;
     supGetItemText2(ListViewHandle, iItem,
         COLUMN_DRVLIST_DRIVER_ADDRESS, szBuffer, 32);
 
-    _strcat(szText, TEXT("\n"));
-    _strcat(szText, szBuffer);
-    _strcat(szText, TEXT("\n"));
+    cchRemaining = cchText - cchWritten;
+    if (cchRemaining) {
+        charsWritten = RtlStringCchPrintfSecure(&lpText[cchWritten],
+            cchRemaining,
+            TEXT("\n%ws\n"),
+            szBuffer);
+
+        if (charsWritten > 0) {
+            cchWritten += charsWritten;
+        }
+    }
 
     drvBase = hextou64(&szBuffer[2]);
 
     //
-    // Module name.
+    // Module name
     //
     szBuffer[0] = 0;
     supGetItemText2(ListViewHandle, iItem,
         COLUMN_DRVLIST_MODULE_NAME, szBuffer, MAX_PATH);
-    _strcat(szText, szBuffer);
+
+    cchRemaining = cchText - cchWritten;
+    if (cchRemaining) {
+        charsWritten = RtlStringCchPrintfSecure(&lpText[cchWritten],
+            cchRemaining,
+            TEXT("%ws"),
+            szBuffer);
+
+        if (charsWritten > 0) {
+            cchWritten += charsWritten;
+        }
+    }
 
     //
-    // Is it filter driver?
+    // Filter driver mark
     //
-    if (supFilterFindByName(&g_DrvFilterListHead, szNameWithoutExt))
-        _strcat(szText, TEXT("\nRegistered as filter"));
+    if (supFilterFindByName(&g_DrvFilterListHead, szNameWithoutExt)) {
+
+        cchRemaining = cchText - cchWritten;
+        if (cchRemaining) {
+            charsWritten = RtlStringCchPrintfSecure(&lpText[cchWritten],
+                cchRemaining,
+                TEXT("\nRegistered as filter"));
+
+            if (charsWritten > 0) {
+                cchWritten += charsWritten;
+            }
+        }
+    }
 
     //
-    // Shim desc.
+    // Shim desc
     //
     szBuffer[0] = 0;
     supGetItemText2(ListViewHandle, iItem,
         COLUMN_DRVLIST_SHIMMED, szBuffer, MAX_PATH);
+
     if (szBuffer[0]) {
 
         bShimmed = supIsDriverShimmed(&g_kdctx.Data->KseEngineDump, (PVOID)drvBase, &shimGUID);
-
         if (bShimmed) {
 
             shimInfo = supGetDriverShimInformation(shimGUID);
             if (shimInfo) {
-                szBuffer[0] = 0;
-                RtlStringCchPrintfSecure(szBuffer,
-                    RTL_NUMBER_OF(szBuffer),
-                    L"\n\n%ws\n%ws",
-                    shimInfo->KseShimName,
-                    shimInfo->Description);
 
-                _strcat(szText, szBuffer);
+                cchRemaining = cchText - cchWritten;
+                if (cchRemaining) {
+                    charsWritten = RtlStringCchPrintfSecure(&lpText[cchWritten],
+                        cchRemaining,
+                        L"\n\n%ws\n%ws",
+                        shimInfo->KseShimName,
+                        shimInfo->Description);
+
+                    if (charsWritten > 0) {
+                        cchWritten += charsWritten;
+                    }
+                }
+
             }
-
         }
     }
 
-    ToolInfo->lpszText = szText;
-    SendMessage(ToolTipHandle, TTM_SETTOOLINFO, 0, (LPARAM)ToolInfo);
+    Context->TooltipBuffer = lpText;
 }
 
 /*
@@ -1452,7 +1520,8 @@ LRESULT CALLBACK DrvListViewHookProc(
                 RtlSecureZeroMemory(&toolInfo, sizeof(toolInfo));
                 toolInfo.cbSize = sizeof(toolInfo);
                 toolInfo.hwnd = DrvDlgContext[DrvModeNormal].hwndDlg;
-                toolInfo.uId = ID_EXTRASLIST;
+                toolInfo.uFlags = TTF_TRACK | TTF_ABSOLUTE | TTF_IDISHWND;
+                toolInfo.uId = (UINT_PTR)hwnd;
                 SendMessage(hwndTT, TTM_TRACKACTIVATE, FALSE, (LPARAM)&toolInfo);
             }
 
@@ -1470,19 +1539,20 @@ LRESULT CALLBACK DrvListViewHookProc(
             oldX = ht.pt.x;
             oldY = ht.pt.y;
 
+            DrvListSetTooltip(&DrvDlgContext[DrvModeNormal], hwnd, currentItem);
+
             RtlSecureZeroMemory(&toolInfo, sizeof(toolInfo));
             toolInfo.cbSize = sizeof(toolInfo);
             toolInfo.hwnd = DrvDlgContext[DrvModeNormal].hwndDlg;
-            toolInfo.uFlags = TTF_TRACK;
-            toolInfo.uId = ID_EXTRASLIST;
-
-            DrvListSetTooltip(hwnd, hwndTT, &toolInfo, currentItem);
+            toolInfo.uFlags = TTF_TRACK | TTF_ABSOLUTE | TTF_IDISHWND;
+            toolInfo.uId = (UINT_PTR)hwnd;
 
             GetCursorPos(&ht.pt);
             SendMessage(hwndTT, TTM_TRACKACTIVATE, (WPARAM)TRUE, (LPARAM)&toolInfo);
             ht.pt.x += 20;
             ht.pt.y += 20;
             SendMessage(hwndTT, TTM_TRACKPOSITION, 0, (LPARAM)MAKELONG(ht.pt.x, ht.pt.y));
+            SendMessage(hwndTT, TTM_UPDATE, 0, 0);
 
             lastItem = currentItem;
         }
@@ -1551,6 +1621,7 @@ VOID DrvDlgOnInit(
 
     SetWindowText(hwndDlg, lpCaption);
 
+    pDlgContext->TooltipBuffer = NULL;
     pDlgContext->StatusBar = GetDlgItem(hwndDlg, ID_EXTRASLIST_STATUSBAR);
 
     extrasSetDlgIcon(pDlgContext);
@@ -1575,7 +1646,6 @@ VOID DrvDlgOnInit(
 
             pDlgContext->TooltipInfo = (PVOID)supCreateTrackingToolTip(ID_EXTRASLIST, hwndDlg);
             if (pDlgContext->TooltipInfo) {
-
                 g_OriginalListViewProc = (WNDPROC)SetWindowLongPtr(pDlgContext->ListView,
                     GWLP_WNDPROC,
                     (LONG_PTR)&DrvListViewHookProc);
@@ -1677,6 +1747,26 @@ INT_PTR CALLBACK DrvDlgProc(
             DrvDlgHandleNotify(
                 pDlgContext,
                 lParam);
+
+#pragma warning(push)
+#pragma warning(disable: 26454)
+            if (((LPNMHDR)lParam)->code == TTN_GETDISPINFO) {
+#pragma warning(pop)
+                LPNMTTDISPINFO lpnmtt;
+
+                lpnmtt = (LPNMTTDISPINFO)lParam;
+
+                if (pDlgContext->DialogMode == DrvModeNormal) {
+
+                    if (pDlgContext->TooltipInfo &&
+                        lpnmtt->hdr.hwndFrom == (HWND)pDlgContext->TooltipInfo)
+                    {
+                        if ((HWND)lpnmtt->hdr.idFrom == pDlgContext->ListView) {
+                            lpnmtt->lpszText = pDlgContext->TooltipBuffer;
+                        }
+                    }
+                }
+            }
         }
         break;
 
@@ -1693,6 +1783,8 @@ INT_PTR CALLBACK DrvDlgProc(
         if (pDlgContext) {
             if (pDlgContext->TooltipInfo)
                 DestroyWindow((HWND)pDlgContext->TooltipInfo);
+
+            DrvTooltipFreeBuffer(pDlgContext);
 
             extrasRemoveDlgIcon(pDlgContext);
 

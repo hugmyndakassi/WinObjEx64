@@ -733,5 +733,5 @@ HPROPSHEETPAGE propSecurityCreatePage(
         return NULL;
     }
 
-    return CreateSecurityPage((LPSECURITYINFO)psi);
+    return CreateSecurityPage((LPSECURITYINFO)psi); //-V1027
 }

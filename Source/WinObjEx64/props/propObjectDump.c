@@ -3365,7 +3365,7 @@ PROP_OBJECT_DUMP_ROUTINE(propObDumpObjectType)
         //
         RtlSecureZeroMemory(TypeProcs, sizeof(TypeProcs));
 
-        RtlCopyMemory(&TypeProcs, 
+        RtlCopyMemory(&TypeProcs,  //-V512
             &ObjectType.Versions.ObjectTypeCompatible->TypeInfo.DumpProcedure, 
             sizeof(TypeProcs));
 

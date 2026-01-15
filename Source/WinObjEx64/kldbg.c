@@ -296,7 +296,7 @@ NTSTATUS ObIsValidUnicodeStringWorker(
         //
         if (SourceString || !(dwFlags & STRSAFE_IGNORE_NULLS)) {
 
-            if ((SourceString->Buffer) &&
+            if ((SourceString->Buffer) && //-V522
                 !kdAddressInUserModeRange((PVOID)SourceString->Buffer))
             {
                 return STATUS_INVALID_PARAMETER;

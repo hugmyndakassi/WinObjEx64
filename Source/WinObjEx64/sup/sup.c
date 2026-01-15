@@ -6,7 +6,7 @@
 *
 *  VERSION:     2.10
 *
-*  DATE:        20 Dec 2025
+*  DATE:        03 Oct 2025
 *
 * THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 * ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -5806,8 +5806,8 @@ BOOL supPrintTimeConverted(
         L"Dec"
     };
 
-    if (FileTimeToLocalFileTime((PFILETIME)Time, (PFILETIME)&ConvertedTime)) {
-        RtlTimeToTimeFields((PLARGE_INTEGER)&ConvertedTime, (PTIME_FIELDS)&TimeFields);
+    if (FileTimeToLocalFileTime((PFILETIME)Time, (PFILETIME)&ConvertedTime)) { //-V1027
+        RtlTimeToTimeFields((PLARGE_INTEGER)&ConvertedTime, (PTIME_FIELDS)&TimeFields); //-V1027
 
         if (TimeFields.Month - 1 < 0) TimeFields.Month = 1;
         if (TimeFields.Month > 12) TimeFields.Month = 12;
@@ -6623,7 +6623,7 @@ HRESULT supxGetShellViewForDesktop(
     {
         if (S_OK == psw->lpVtbl->FindWindowSW(psw, &vtEmpty, &vtEmpty, SWC_DESKTOP, (long*)(LONG_PTR)&hwnd, SWFO_NEEDDISPATCH, &pdisp))
         {
-            hr = IUnknown_QueryService((IUnknown*)pdisp, &SID_STopLevelBrowser, &IID_IShellBrowser, (void**)&psb);
+            hr = IUnknown_QueryService((IUnknown*)pdisp, &SID_STopLevelBrowser, &IID_IShellBrowser, (void**)&psb); //-V1027
             if (SUCCEEDED(hr))
             {
                 hr = psb->lpVtbl->QueryActiveShellView(psb, &psv);
@@ -9470,7 +9470,7 @@ BOOL supResolveSymbolicLinkTarget(
             LinkTarget->Buffer = (PWCH)supHeapAlloc(sizeof(WCHAR));
             if (LinkTarget->Buffer) {
                 LinkTarget->Buffer[0] = 0;
-                LinkTarget->Length = 0;
+                LinkTarget->Length = 0; //-V1048
                 LinkTarget->MaximumLength = (USHORT)sizeof(WCHAR);
                 bResult = TRUE;
             }
@@ -9578,7 +9578,7 @@ VOID supClipboardCopyUnicodeStringRaw(
     //
     // '0', 'x', ',', ' ', 'A', 'B' = 6 * sizeof(WCHAR)
     //
-    bytes = 100 + ((SIZE_T)String->Length * 12);;
+    bytes = 100 + ((SIZE_T)String->Length * 12);
     copyBuffer = (PWCH)supHeapAlloc(bytes);
     if (copyBuffer == NULL)
         return;
@@ -9876,8 +9876,9 @@ HWND supCreateTrackingToolTip(
         RtlSecureZeroMemory(&toolInfo, sizeof(toolInfo));
         toolInfo.cbSize = sizeof(toolInfo);
         toolInfo.hwnd = hwndOwner;
-        toolInfo.uFlags = TTF_TRACK | TTF_ABSOLUTE;
-        toolInfo.uId = (UINT_PTR)toolID;
+        toolInfo.uFlags = TTF_TRACK | TTF_ABSOLUTE | TTF_IDISHWND;
+        toolInfo.uId = (UINT_PTR)GetDlgItem(hwndOwner, toolID);
+        toolInfo.lpszText = LPSTR_TEXTCALLBACK;
 
         SendMessage(hwndTip, TTM_ADDTOOL, 0, (LPARAM)&toolInfo);
         SendMessage(hwndTip, TTM_SETMAXTIPWIDTH, 0, MAX_PATH * 2);

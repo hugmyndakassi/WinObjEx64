@@ -50,7 +50,7 @@ typedef HWND(WINAPI *pfnHtmlHelpW)(
 #define PROGRAM_MAJOR_VERSION       2
 #define PROGRAM_MINOR_VERSION       1
 #define PROGRAM_REVISION_NUMBER     0
-#define PROGRAM_BUILD_NUMBER        2511
+#define PROGRAM_BUILD_NUMBER        2601
 
 #ifdef _USE_OWN_DRIVER
 #define PROGRAM_NAME            L"Windows Object Explorer 64-bit (Non-public version)"
